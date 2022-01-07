@@ -16,7 +16,17 @@ class Order(models.Model):
         (PERCENTAGE, "Percentage")
     )
 
-    order_id = models.CharField(max_length=500)
+    CUSTOMER = "customer"
+    AGENT = "agent"
+
+    ORDER_CREATED_BY = (
+        (CUSTOMER, "Customer"),
+        (AGENT, "Agent")
+    )
+
+
+    order_created_by = models.CharField(max_length=500, null=True, blank=True, choices=ORDER_CREATED_BY)
+    order_id = models.CharField(max_length=500, null=True, blank=True)
     customer_shop_name = models.CharField(max_length=500, blank=True, null=True)
     customer_first_name = models.CharField(max_length=500, blank=True, null=True)
     customer_last_name = models.CharField(max_length=500, blank=True, null=True)
@@ -27,6 +37,8 @@ class Order(models.Model):
     total_quantity = models.IntegerField(blank=True, null=True)
     subtotal_order_value = models.IntegerField(blank=True, null=True)
     gst_value = models.IntegerField(blank=True, null=True)
+    tax_included = models.BooleanField(default=False)
+    tax_value =  models.CharField(max_length=500, blank=True, null=True)
     total_order_value = models.IntegerField(blank=True, null=True)
     is_cancelled = models.BooleanField(default=False)
     is_hold = models.BooleanField(default=False)
@@ -49,6 +61,11 @@ class Order(models.Model):
             name = self.customer_shop_name
         return f"Order: {self.order_id} - Shop/Customer: {name}"
 
+    
+    class Meta:
+        verbose_name = "Order"
+        verbose_name_plural = "Orders"
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, blank=True, null=True, on_delete=models.CASCADE)
@@ -61,3 +78,7 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"Order: {self.order_id} - Product: {self.product_id} - Variant: {self.variant_id}"
+
+    class Meta:
+        verbose_name = "Order Item"
+        verbose_name_plural = "Order Items"
