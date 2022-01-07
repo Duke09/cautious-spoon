@@ -130,5 +130,8 @@ dmypy.json
 
 
 # Custom files
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
 Pipfile
 Pipfile.lock
