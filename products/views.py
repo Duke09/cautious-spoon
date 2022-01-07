@@ -7,10 +7,20 @@ from rest_framework import status
 
 from flashbloom.utils import set_response
 
-from .serialzers import CreateProductSerialzer, UpdateProductSerialzer
+from .serialzers import CreateProductSerialzer, ProductSerializer, ProductVariantSerializer, UpdateProductSerialzer
 from .models import ProductVariants, Products
 
 # Create your views here.
+class ProductListAPI(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = ProductSerializer
+
+    def get(self, request):
+        products = Products.objects.all()
+        serializer = self.serializer_class(products, many=True).data
+        return set_response(data=serializer, status=status.HTTP_200_OK)
+
+
 class ProductWebhookAPI(APIView):
     permission_classes = (AllowAny,)
     serializer_class = CreateProductSerialzer

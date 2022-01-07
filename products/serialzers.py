@@ -4,15 +4,18 @@ from rest_framework import serializers
 from .models import Products, ProductVariants
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Products
-        fields = "__all__"
-
-
 class ProductVariantSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProductVariants,
+        model = ProductVariants
+        fields = "__all__"
+
+class ProductSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['variants'] = ProductVariantSerializer(ProductVariants.objects.filter(product=instance), many=True).data
+        return data
+    class Meta:
+        model = Products
         fields = "__all__"
 
 
