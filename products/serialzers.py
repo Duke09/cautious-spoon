@@ -65,6 +65,7 @@ class CreateProductSerialzer(ProductSerializer):
 
 
 class UpdateProductSerialzer(ProductSerializer):
+    variants = serializers.ListField(required=False)
 
     def update(self, product, validated_data):
         variants = validated_data.get('variants')
@@ -78,11 +79,17 @@ class UpdateProductSerialzer(ProductSerializer):
         product.tax_slab=validated_data.get('tax_slab')
         product.draft=validated_data.get('draft')
         product.save()
-
+        
         if variants:
             for variant in variants:
-                variant['product'] = product
-            ProductVariants.objects.bulk_update(
-                [ProductVariants(**variant) for variant in variants])
+                obj, created = ProductVariants.objects.update_or_create(
+                    product=product,
+                    variant_title=variant['variant_title'],
+                    sku=variant['sku'],
+                    inventory_quantity=variant['inventory_quantity'],
+                    image_url=variant['image_url'],
+                    variant_price=variant['variant_price']
+                )
+                obj.save()
 
         return product

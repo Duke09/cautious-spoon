@@ -3,11 +3,16 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework import status
+from django.views.generic import TemplateView
+
 
 from flashbloom.utils import set_response
 from orders.serialzers import CreateOrderSerialzer
 
 # Create your views here.
+class OrderView(TemplateView):
+    template_name = 'orders/order.html'
+
 class CreateOrder(APIView):
     permission_classes = (AllowAny,)
     serializer_class = CreateOrderSerialzer

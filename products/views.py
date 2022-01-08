@@ -3,6 +3,8 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework import status
+from django.views.generic import TemplateView
+from django.template.response import TemplateResponse
 
 
 from flashbloom.utils import set_response
@@ -11,6 +13,19 @@ from .serialzers import CreateProductSerialzer, ProductSerializer, ProductVarian
 from .models import ProductVariants, Products
 
 # Create your views here.
+class ProductView(TemplateView):
+    template_name = 'products/product.html'
+
+    def get(self, request):
+        products = Products.objects.all().order_by('-created_at')
+        ctx = {
+            "products":products,
+        }
+
+        return TemplateResponse(
+            request, "products/product.html", ctx
+        )
+
 class ProductListAPI(APIView):
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer

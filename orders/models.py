@@ -1,5 +1,7 @@
 import uuid
 from django.db import models
+from django.db.models.signals import pre_save
+from utils.generators import order_id_generator, order_number_generator
 
 # Create your models here.
 class Order(models.Model):
@@ -27,6 +29,7 @@ class Order(models.Model):
 
     order_created_by = models.CharField(max_length=500, null=True, blank=True, choices=ORDER_CREATED_BY)
     order_id = models.CharField(max_length=500, null=True, blank=True)
+    order_number = models.CharField(max_length=500, null=True, blank=True)
     customer_shop_name = models.CharField(max_length=500, blank=True, null=True)
     customer_first_name = models.CharField(max_length=500, blank=True, null=True)
     customer_last_name = models.CharField(max_length=500, blank=True, null=True)
@@ -50,10 +53,10 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-        if not self.order_id:
-            self.order_id = uuid.uuid4()
-        return super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.order_id:
+    #         self.order_id = uuid.uuid4()
+    #     return super().save(*args, **kwargs)
 
     def __str__(self):
         name = f"{self.customer_first_name} {self.customer_last_name}"
@@ -65,6 +68,14 @@ class Order(models.Model):
     class Meta:
         verbose_name = "Order"
         verbose_name_plural = "Orders"
+
+
+def order_id_receiver(sender, instance, *args, **kwargs):
+    if not instance.order_id:
+        instance.order_id = order_id_generator(instance)
+    if not instance.order_number:
+        instance.order_number = order_number_generator(instance)
+pre_save.connect(order_id_receiver, sender=Order)
 
 
 class OrderItem(models.Model):
