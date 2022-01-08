@@ -40,6 +40,10 @@ INSTALLED_APPS = [
     #CUstom Apps
     'products',
     'orders',
+    'website',
+
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -54,10 +58,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'flashbloom.urls'
 
+TEMPLATE_PATH = BASE_DIR / 'templates'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATE_PATH],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -120,7 +126,37 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [BASE_DIR / 'site_static']
+
+STATIC_ROOT = BASE_DIR / 'static_cdn' / 'static'
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = BASE_DIR / 'static_cdn' / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+
+# CORS setting
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ALLOW_HEADERS = default_headers + (
+#     'content-disposition',
+# )
+
+# CORS_EXPOSE_HEADERS = ['content-disposition']

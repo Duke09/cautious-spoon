@@ -135,3 +135,4 @@ dmypy.json
 !**/migrations/__init__.py
 Pipfile
 Pipfile.lock
+static_cdn/
